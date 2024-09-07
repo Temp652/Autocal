@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sensor Data</title>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .data-label {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="data-label">Temperature: <span id="temperature">Loading...</span> °C</div>
+        <div class="data-label">Humidity: <span id="humidity">Loading...</span> %</div>
+    </div>
+
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBt5-baBPw86Tx0mk35q80KsmooGDuBsGU",
+            authDomain: "autocal121.firebaseapp.com",
+            databaseURL: "https://autocal121-default-rtdb.firebaseio.com",
+            projectId: "autocal121",
+            storageBucket: "autocal121.appspot.com",
+            messagingSenderId: "641822345955",
+            appId: "1:641822345955:web:5140e49bf4450e8213d3d6",
+            measurementId: "G-LTEBKHBX0Q"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Reference to your data
+        const dataRef = database.ref('data');
+
+        // Fetch the latest data
+        dataRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                const latestEntry = Object.values(data).pop(); // Get the latest entry
+                document.getElementById('temperature').textContent = latestEntry.temperature || 'N/A';
+                document.getElementById('humidity').textContent = latestEntry.humidity || 'N/A';
+            }
+        });
+    </script>
+</body>
+</html>
+
