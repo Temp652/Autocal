@@ -13,17 +13,19 @@
                 fetch("https://autocal121-default-rtdb.firebaseio.com/data.json?auth=AIzaSyBt5-baBPw86Tx0mk35q80KsmooGDuBsGU")
                 .then(response => response.json())
                 .then(data => {
-                    // Check if the data is an object
-                    if (data && typeof data === 'object') {
-                        const keys = Object.keys(data);
-                        if (keys.length > 0) {
-                            const latestKey = keys[keys.length - 1];
-                            const latestData = data[latestKey];
+                    console.log("Fetched data:", data); // Log data for debugging
 
-                            // Check if latestData has temperature and humidity
-                            if (latestData && latestData.temperature !== undefined && latestData.humidity !== undefined) {
-                                tempElement.textContent = latestData.temperature;
-                                humidityElement.textContent = latestData.humidity;
+                    if (data && typeof data === 'object') {
+                        const timestamps = Object.keys(data);
+                        if (timestamps.length > 0) {
+                            const latestTimestamp = timestamps[timestamps.length - 1];
+                            const latestData = data[latestTimestamp];
+                            const latestKey = Object.keys(latestData).pop(); // Get the last key in the latest timestamp object
+                            const sensorData = latestData[latestKey];
+
+                            if (sensorData && sensorData.temperature !== undefined && sensorData.humidity !== undefined) {
+                                tempElement.textContent = sensorData.temperature;
+                                humidityElement.textContent = sensorData.humidity;
                             } else {
                                 tempElement.textContent = "No data";
                                 humidityElement.textContent = "No data";
