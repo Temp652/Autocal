@@ -8,24 +8,42 @@
         document.addEventListener("DOMContentLoaded", function() {
             const tempElement = document.getElementById("temperature");
             const humidityElement = document.getElementById("humidity");
-            
+
             function fetchData() {
                 fetch("https://autocal121-default-rtdb.firebaseio.com/data.json?auth=AIzaSyBt5-baBPw86Tx0mk35q80KsmooGDuBsGU")
                 .then(response => response.json())
                 .then(data => {
-                    // Get the latest entry
-                    const latestKey = Object.keys(data)[Object.keys(data).length - 1];
-                    const latestData = data[latestKey];
-                    
-                    // Update the HTML elements with the latest data
-                    tempElement.textContent = latestData.temperature;
-                    humidityElement.textContent = latestData.humidity;
+                    // Check if the data is an object
+                    if (data && typeof data === 'object') {
+                        const keys = Object.keys(data);
+                        if (keys.length > 0) {
+                            const latestKey = keys[keys.length - 1];
+                            const latestData = data[latestKey];
+
+                            // Check if latestData has temperature and humidity
+                            if (latestData && latestData.temperature !== undefined && latestData.humidity !== undefined) {
+                                tempElement.textContent = latestData.temperature;
+                                humidityElement.textContent = latestData.humidity;
+                            } else {
+                                tempElement.textContent = "No data";
+                                humidityElement.textContent = "No data";
+                            }
+                        } else {
+                            tempElement.textContent = "No data";
+                            humidityElement.textContent = "No data";
+                        }
+                    } else {
+                        tempElement.textContent = "Invalid data";
+                        humidityElement.textContent = "Invalid data";
+                    }
                 })
                 .catch(error => {
                     console.error("Error fetching data:", error);
+                    tempElement.textContent = "Error";
+                    humidityElement.textContent = "Error";
                 });
             }
-            
+
             // Fetch data initially
             fetchData();
             // Fetch data every 10 seconds
